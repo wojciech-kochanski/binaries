@@ -7,12 +7,6 @@ exit
 chcp 65001 >nul
 cls
 
-:: Wlacz kolory ANSI w cmd
-reg add HKCU\Console /v VirtualTerminalLevel /t REG_DWORD /d 1 /f >nul 2>&1
-
-set GREEN=[32m
-set RESET=[0m
-
 echo.
 echo +----------------------------------------------------------+
 echo ^|             GIT UPDATE - RESET + PULL                   ^|
@@ -51,9 +45,7 @@ set PULL_RESULT=%ERRORLEVEL%
 echo.
 
 if %PULL_RESULT% NEQ 0 (
-    echo +----------------------------------------------------------+
-    echo ^|  [XX] BLAD: git pull zakonczyl sie bledem!             ^|
-    echo +----------------------------------------------------------+
+    powershell -Command "Write-Host '+----------------------------------------------------------+' -ForegroundColor Red; Write-Host '|  [XX] BLAD: git pull zakonczyl sie bledem!             |' -ForegroundColor Red; Write-Host '+----------------------------------------------------------+' -ForegroundColor Red"
     echo.
     echo Nacisnij dowolny klawisz lub zamknij okno...
     pause >nul
@@ -66,18 +58,9 @@ for /f "tokens=*" %%i in ('git log -1 --format^=%%s 2^>nul') do set AFTER_MSG=%%
 for /f "tokens=*" %%i in ('git log -1 --format^=%%an 2^>nul') do set AFTER_AUTHOR=%%i
 
 if "%BEFORE_HASH%"=="%AFTER_HASH%" (
-    echo %GREEN%+----------------------------------------------------------+%RESET%
-    echo %GREEN%^|  [OK] Repozytorium jest aktualne. Nic do pobrania.    ^|%RESET%
-    echo %GREEN%+----------------------------------------------------------+%RESET%
+    powershell -Command "Write-Host '+----------------------------------------------------------+' -ForegroundColor Green; Write-Host '|  [OK] Repozytorium jest aktualne. Nic do pobrania.    |' -ForegroundColor Green; Write-Host '+----------------------------------------------------------+' -ForegroundColor Green"
 ) else (
-    echo %GREEN%+----------------------------------------------------------+%RESET%
-    echo %GREEN%^|  [OK] Pobrano nowe zmiany z remote!                    ^|%RESET%
-    echo %GREEN%+----------------------------------------------------------+%RESET%
-    echo %GREEN%^|  OSTATNI COMMIT:                                        ^|%RESET%
-    echo %GREEN%^|    Data   : %AFTER_DATE%%RESET%
-    echo %GREEN%^|    Autor  : %AFTER_AUTHOR%%RESET%
-    echo %GREEN%^|    Koment.: %AFTER_MSG%%RESET%
-    echo %GREEN%+----------------------------------------------------------+%RESET%
+    powershell -Command "Write-Host '+----------------------------------------------------------+' -ForegroundColor Green; Write-Host '|  [OK] Pobrano nowe zmiany z remote!                    |' -ForegroundColor Green; Write-Host '+----------------------------------------------------------+' -ForegroundColor Green; Write-Host '|  OSTATNI COMMIT:' -ForegroundColor Green; Write-Host ('|    Data   : %AFTER_DATE%') -ForegroundColor Green; Write-Host ('|    Autor  : %AFTER_AUTHOR%') -ForegroundColor Green; Write-Host ('|    Koment.: %AFTER_MSG%') -ForegroundColor Green; Write-Host '+----------------------------------------------------------+' -ForegroundColor Green"
 )
 
 echo.
