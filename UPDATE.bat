@@ -7,6 +7,12 @@ exit
 chcp 65001 >nul
 cls
 
+:: Wlacz kolory ANSI w cmd
+reg add HKCU\Console /v VirtualTerminalLevel /t REG_DWORD /d 1 /f >nul 2>&1
+
+set GREEN=[32m
+set RESET=[0m
+
 echo.
 echo +----------------------------------------------------------+
 echo ^|             GIT UPDATE - RESET + PULL                   ^|
@@ -36,7 +42,7 @@ echo  [OK] Lokalne zmiany zostaly odrzucone.
 echo.
 
 :do_pull
-for /f "tokens=*" %%i in ('git log -1 --format="%%H" 2^>nul') do set BEFORE_HASH=%%i
+for /f "tokens=*" %%i in ('git log -1 --format^=%%H 2^>nul') do set BEFORE_HASH=%%i
 
 echo  [ ] Pobieram zmiany z remote...
 echo.
@@ -54,24 +60,24 @@ if %PULL_RESULT% NEQ 0 (
     exit /b %PULL_RESULT%
 )
 
-for /f "tokens=*" %%i in ('git log -1 --format="%%H" 2^>nul') do set AFTER_HASH=%%i
-for /f "tokens=*" %%i in ('git log -1 --format="%%ai" 2^>nul') do set AFTER_DATE=%%i
-for /f "tokens=*" %%i in ('git log -1 --format="%%s" 2^>nul') do set AFTER_MSG=%%i
-for /f "tokens=*" %%i in ('git log -1 --format="%%an" 2^>nul') do set AFTER_AUTHOR=%%i
+for /f "tokens=*" %%i in ('git log -1 --format^=%%H 2^>nul') do set AFTER_HASH=%%i
+for /f "tokens=*" %%i in ('git log -1 --format^=%%ai 2^>nul') do set AFTER_DATE=%%i
+for /f "tokens=*" %%i in ('git log -1 --format^=%%s 2^>nul') do set AFTER_MSG=%%i
+for /f "tokens=*" %%i in ('git log -1 --format^=%%an 2^>nul') do set AFTER_AUTHOR=%%i
 
 if "%BEFORE_HASH%"=="%AFTER_HASH%" (
-    echo +----------------------------------------------------------+
-    echo ^|  [OK] Repozytorium jest aktualne. Nic do pobrania.    ^|
-    echo +----------------------------------------------------------+
+    echo %GREEN%+----------------------------------------------------------+%RESET%
+    echo %GREEN%^|  [OK] Repozytorium jest aktualne. Nic do pobrania.    ^|%RESET%
+    echo %GREEN%+----------------------------------------------------------+%RESET%
 ) else (
-    echo +----------------------------------------------------------+
-    echo ^|  [OK] Pobrano nowe zmiany z remote!                    ^|
-    echo +----------------------------------------------------------+
-    echo ^|  OSTATNI COMMIT:                                        ^|
-    echo ^|    Data   : %AFTER_DATE%
-    echo ^|    Autor  : %AFTER_AUTHOR%
-    echo ^|    Koment.: %AFTER_MSG%
-    echo +----------------------------------------------------------+
+    echo %GREEN%+----------------------------------------------------------+%RESET%
+    echo %GREEN%^|  [OK] Pobrano nowe zmiany z remote!                    ^|%RESET%
+    echo %GREEN%+----------------------------------------------------------+%RESET%
+    echo %GREEN%^|  OSTATNI COMMIT:                                        ^|%RESET%
+    echo %GREEN%^|    Data   : %AFTER_DATE%%RESET%
+    echo %GREEN%^|    Autor  : %AFTER_AUTHOR%%RESET%
+    echo %GREEN%^|    Koment.: %AFTER_MSG%%RESET%
+    echo %GREEN%+----------------------------------------------------------+%RESET%
 )
 
 echo.
